@@ -1,6 +1,6 @@
 export default function AboutRoute() {
   return (
-    <main className="p-5">
+    <main className="pt-5 px-2">
       <h1 className="text-4xl font-bold">About</h1>
       <p className="mt-4">Hi! I&apos;m Creeland</p>
       <p>
