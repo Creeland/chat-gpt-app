@@ -7,14 +7,20 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-import { useSession, signIn, signOut } from "next-auth/react"
+import { useSession } from "next-auth/react"
 
 function getFirstTwoCapitalLetters(name: string) {
   const match = (name || "").match(/[A-Z]/g)
   return match ? match.slice(0, 2).join("") : "GT"
 }
 
-export default function UserButton() {
+export default function UserButton({
+  onSignIn,
+  onSignOut,
+}: {
+  onSignIn: () => Promise<void>
+  onSignOut: () => Promise<void>
+}) {
   const { data: session, status } = useSession()
   return (
     <div>
@@ -29,14 +35,14 @@ export default function UserButton() {
             </Avatar>
           </DropdownMenuTrigger>
           <DropdownMenuContent>
-            <DropdownMenuItem onClick={() => signOut()}>
+            <DropdownMenuItem onClick={() => onSignOut()}>
               Sign out
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       )}
       {status === "unauthenticated" && (
-        <Button onClick={() => signIn()}>Sign in</Button>
+        <Button onClick={() => onSignIn()}>Sign in</Button>
       )}
     </div>
   )
