@@ -18,7 +18,10 @@ export async function getCompletion(
 ) {
   const response = await openai.chat.completions.create({
     model: "gpt-4o-mini",
-    messages: messageHistory,
+    messages: messageHistory.map((msg) => ({
+      role: msg.role,
+      content: msg.content,
+    })),
   })
 
   const messages = [

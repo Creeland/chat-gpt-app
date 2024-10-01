@@ -5,17 +5,23 @@ import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 
 import { getCompletion } from "@/app/server-actions/getCompletion"
+import { useRouter } from "next/navigation"
+import Transcript from "./Transcript"
 
-interface Message {
-  role: "user" | "assistant"
-  content: string
-}
+import { Message } from "@/types"
 
-export default function Chat() {
-  const [messages, setMessages] = useState<Message[]>([])
+export default function Chat({
+  id = null,
+  messages: initialMessages = [],
+}: {
+  id?: number | null
+  messages?: Message[]
+}) {
+  const [messages, setMessages] = useState<Message[]>(initialMessages)
   const [message, setMessage] = useState("")
+  const chatId = useRef<number | null>(id)
 
-  const chatId = useRef<number | null>(null)
+  const router = useRouter()
 
   const onClick = async () => {
     const completions = await getCompletion(chatId.current, [
@@ -25,6 +31,10 @@ export default function Chat() {
         content: message,
       },
     ])
+    if (!chatId.current) {
+      router.push(`/chats/${completions.id}`)
+      router.refresh()
+    }
     chatId.current = completions.id
     setMessage("")
     setMessages(completions.messages)
@@ -32,22 +42,7 @@ export default function Chat() {
 
   return (
     <div className="flex flex-col">
-      {messages.map((message, i) => (
-        <div
-          key={i}
-          className={`mb-5 flex flex-col ${
-            message.role === "user" ? "items-end" : "items-start"
-          }`}
-        >
-          <div
-            className={`${
-              message.role === "user" ? "bg-blue-500" : "bg-gray-500 text-black"
-            } rounded-md py-2 px-8`}
-          >
-            {message.content}
-          </div>
-        </div>
-      ))}
+      <Transcript messages={messages} truncate={false} />
       <div className="flex border-t-2 border-t-gray-500 pt-3 mt-3">
         <Input
           className="flex-grow text-xl"

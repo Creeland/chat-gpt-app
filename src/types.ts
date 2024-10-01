@@ -1,6 +1,6 @@
 export interface Chat {
   id: number
-  userEmail: string
+  user_email: string
   name: string
   timestamp: Date
 }
